@@ -806,10 +806,14 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
             // 0 mean the bigger size
             $size_number = (int)array_search($sizes[0], $this->pl_sizes_sort);
-
-            if($row_sum_qty <= $this->pl_second_mcq[$size_number]){
-                $carton_weight = $this->pl_second_carton_weight;
-                $carton = $this->pl_second_carton[$size_number];
+            if(isset($this->pl_second_mcq[$size_number])){
+                if($row_sum_qty <= $this->pl_second_mcq[$size_number]){
+                    $carton_weight = $this->pl_second_carton_weight;
+                    $carton = $this->pl_second_carton[$size_number];
+                }else{
+                    $carton_weight = $this->pl_first_carton_weight;
+                    $carton = $this->pl_first_carton[$size_number];
+                }
             }else{
                 $carton_weight = $this->pl_first_carton_weight;
                 $carton = $this->pl_first_carton[$size_number];
@@ -893,13 +897,23 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
             $size_number = (int)array_search($size, $this->pl_sizes_sort);
 //            dd($qty . ' ' . $this->pl_third_mcq[$size_number]);
-            if($qty <= $this->pl_third_mcq[$size_number]){
+            if(isset($this->pl_third_mcq[$size_number])){
+                if($qty <= $this->pl_third_mcq[$size_number]){
 
-                $carton_weight = $this->pl_third_carton_weight;
-                $carton = $this->pl_third_carton[$size_number];
+                    $carton_weight = $this->pl_third_carton_weight;
+                    $carton = $this->pl_third_carton[$size_number];
+                }else{
+                    $carton_weight = $this->pl_second_carton_weight;
+                    $carton = $this->pl_second_carton[$size_number];
+                }
             }else{
-                $carton_weight = $this->pl_second_carton_weight;
-                $carton = $this->pl_second_carton[$size_number];
+                if(isset($this->pl_second_mcq[$size_number])) {
+                    $carton_weight = $this->pl_second_carton_weight;
+                    $carton = $this->pl_second_carton[$size_number];
+                }else{
+                    $carton_weight = $this->pl_first_carton_weight;
+                    $carton = $this->pl_first_carton[$size_number];
+                }
             }
             //GW
             $event->sheet->setCellValue($this->column_letter[$this->packing_list['pl_no_of_sizes']+5].($this->table_second_content_row_start),
