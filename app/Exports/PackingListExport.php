@@ -46,15 +46,22 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
     protected $pl_carton_number;
     protected $pl_no_size_mcq;
     protected $pl_next_ctn_mcq;
-    protected $pl_last_ctn_mcq;
+    protected $pl_carton_list;
+
+    protected $numberSeparator;
+    protected $numberSeparatorDecimal;
 
     public function __construct($packing_list)
     {
         $this->packing_list = $packing_list;
+
 //        dd($this->packing_list);
         $this->column_letter = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'
                                 ,'AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU'];
         $this->size_list = ['XS','S','M','L','XL','2XL','3XL'];
+
+        $this->numberSeparator = "#,##0";
+        $this->numberSeparatorDecimal = "#,##0.00";
 
         $this->table_content_row_start = 12;
         $this->table_second_content_row_start = 12;
@@ -64,7 +71,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         $this->pl_carton_number = 1;
         $this->pl_balance_quantity = [];
         $this->pl_no_size_mcq = [];
-
+        $this->pl_carton_list = [];
 
         $this->initiateSizeDetails();
         //initiate pl sizes sort, pl size codes , pl quantities by sizes
@@ -107,6 +114,23 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
                //DISPLAY TABLE CONTENT
                $this->displayTableContent($event);
                //DISPLAY TABLE CONTENT
+               //BORDER
+               $event->sheet->mergeCells('A'.($this->table_second_content_row_start+1).':'.($this->column_letter[$this->packing_list['pl_no_of_sizes']+8]).($this->table_second_content_row_start+1))
+                   ->getStyle('A'.($this->table_second_content_row_start+1).':'.($this->column_letter[$this->packing_list['pl_no_of_sizes']+8]).($this->table_second_content_row_start+1))
+                   ->applyFromArray(['borders' => ['bottom' => ['borderStyle' => Border::BORDER_MEDIUM,],],]);
+               //BORDER
+               //DISPLAY SIZE SUMMARY
+                $this->displaySizeSummary($event);
+               //DISPLAY SIZE SUMMARY
+               //DISPLAY carton SUMMARY
+                $this->displayCartonSummary($event);
+               //DISPLAY carton SUMMARY
+               //DISPLAY PACKING METHOD
+               $this->displayPackingMethod($event);
+               //DISPLAY PACKING METHOD
+               //DISPLAY CARTON MARKING
+               $this->displayCartonMarking($event);
+               //DISPLAY CARTON MARKING
 
            },
            AfterSheet::class => function(AfterSheet $event){
@@ -530,27 +554,26 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             ],
         ];
 
-        $numberSeparator = "#,##0";
-        $numberSeparatorDecimal = "#,##0.00";
+
         for($brd = $this->table_content_row_start;$brd <= $this->table_second_content_row_start; $brd++){
             if($brd < $this->table_second_content_row_start){
-                $event->sheet->getStyle('B'.$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparator);
-                $event->sheet->getStyle('C'.$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparator);
+                $event->sheet->getStyle('B'.$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
+                $event->sheet->getStyle('C'.$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
                 $event->sheet->getStyle('D'.$brd)->applyFromArray($style_brd);
 
                 for($brds = 0; $brds < $this->packing_list['pl_no_of_sizes'];$brds++){
-                    $event->sheet->getStyle($this->column_letter[$brds].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparator);
+                    $event->sheet->getStyle($this->column_letter[$brds].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
                 }
             }
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparator);
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+1].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparator);
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+2].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparator);
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+3].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparatorDecimal);
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+4].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparatorDecimal);
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+5].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparatorDecimal);
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+6].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparatorDecimal);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+1].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+2].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+3].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparatorDecimal);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+4].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparatorDecimal);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+5].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparatorDecimal);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+6].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparatorDecimal);
             $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+7].$brd)->applyFromArray($style_brd);
-            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+8].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($numberSeparatorDecimal);
+            $event->sheet->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+8].$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparatorDecimal);
         }
 
         //PUT BORDER TO CONTENT
@@ -610,6 +633,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
                     //CARTON MEASUREMENT
                     $event->sheet->setCellValue($this->column_letter[$this->packing_list['pl_no_of_sizes']+7].($this->table_content_row_start+$frc),
                         $this->pl_first_carton[$ss]);
+                    if(!in_array($this->pl_first_carton[$ss],$this->pl_carton_list)){
+                        array_push($this->pl_carton_list,$this->pl_first_carton[$ss]);
+                    }
                     //CBM
                     $carton_explode = explode('*',$this->pl_first_carton[$ss]);
                     $cbm = ((float)$carton_explode[0]/100) * ((float)$carton_explode[1]/100) * ((float)$carton_explode[2]/100) *
@@ -834,6 +860,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             //CARTON MEASUREMENT
             $event->sheet->setCellValue($this->column_letter[$this->packing_list['pl_no_of_sizes']+7].($this->table_second_content_row_start),
                 $carton);
+            if(!in_array($carton,$this->pl_carton_list)){
+                array_push($this->pl_carton_list,$carton);
+            }
             //CBM
             $carton_explode = explode('*',$carton);
             $cbm = ((float)$carton_explode[0]/100) * ((float)$carton_explode[1]/100) * ((float)$carton_explode[2]/100) * 1;
@@ -930,6 +959,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             //CARTON MEASUREMENT
             $event->sheet->setCellValue($this->column_letter[$this->packing_list['pl_no_of_sizes']+7].($this->table_second_content_row_start),
                 $carton);
+            if(!in_array($carton,$this->pl_carton_list)){
+                array_push($this->pl_carton_list,$carton);
+            }
             //CBM
             $carton_explode = explode('*',$carton);
             $cbm = ((float)$carton_explode[0]/100) * ((float)$carton_explode[1]/100) * ((float)$carton_explode[2]/100) * 1;
@@ -969,6 +1001,163 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             $event->sheet->setCellValue('T'.$nmc,$size . '-' . $qty)->getStyle('T'.$nmc)->applyFromArray($style);
             $nmc++;
         }
+    }
+
+    private function displaySizeSummary($event)
+    {
+        $size_summary_row_start = $this->table_second_content_row_start+3;
+        $style = [
+            'borders' => [
+                //outline all
+                'outline' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'font' => [
+                'size' => 10,
+                'bold' => true,
+            ],
+        ];
+//        dd($this->pl_quantities);
+        $event->sheet->setCellValue('F'.$size_summary_row_start,'Size Summary')->getStyle('F'.$size_summary_row_start)->applyFromArray($style);
+        //SIZES AND VALUE
+        for($z=0;$z < $this->packing_list['pl_no_of_sizes'];$z++){
+            $event->sheet->setCellValue($this->column_letter[$z].$size_summary_row_start,$this->pl_sizes_sort[$z])
+                ->getStyle($this->column_letter[$z].$size_summary_row_start)
+                ->applyFromArray($style);
+            $event->sheet->setCellValue($this->column_letter[$z].($size_summary_row_start+1),
+                $this->pl_quantities[$this->pl_sizes_sort[$z]])
+                ->getStyle($this->column_letter[$z].($size_summary_row_start+1))
+                ->applyFromArray($style)->getNumberFormat()->setFormatCode($this->numberSeparator);
+        }
+        //SIZES AND VALUE
+        $event->sheet->setCellValue('F'.($size_summary_row_start+1),$this->packing_list['pl_color_desc'])
+            ->getStyle('F'.($size_summary_row_start+1))->applyFromArray($style);
+        $event->sheet->setCellValue($this->column_letter[$this->packing_list['pl_no_of_sizes']].($size_summary_row_start),
+            'TOTAL')->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']].($size_summary_row_start))->applyFromArray($style);
+        $event->sheet->setCellValue($this->column_letter[$this->packing_list['pl_no_of_sizes']].($size_summary_row_start+1),
+            '=SUM('.$this->column_letter[0].($size_summary_row_start+1).':'.
+            $this->column_letter[$this->packing_list['pl_no_of_sizes']-1].($size_summary_row_start+1).')')
+            ->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']].($size_summary_row_start+1))->applyFromArray($style)
+            ->getNumberFormat()->setFormatCode($this->numberSeparator);
+    }
+
+    private function displayCartonSummary( $event)
+    {
+        $carton_summary_row_start = $this->table_second_content_row_start+6;
+        $style = [
+            'borders' => [
+                //outline all
+                'outline' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'font' => [
+                'size' => 10,
+                'bold' => true,
+            ],
+        ];
+
+        $event->sheet->setCellValue('F'.$carton_summary_row_start,'Carton Summary')
+            ->getStyle('F'.$carton_summary_row_start)->applyFromArray($style);
+        $event->sheet->setCellValue('G'.$carton_summary_row_start,'QTY')
+            ->getStyle('G'.$carton_summary_row_start)->applyFromArray($style);
+
+        for($cl = 1; $cl <= count($this->pl_carton_list);$cl++){
+            $event->sheet->setCellValue('F'.($carton_summary_row_start+$cl),$this->pl_carton_list[$cl-1])
+                ->getStyle('F'.($carton_summary_row_start+$cl))->applyFromArray($style);
+            $carton_qty = '=SUMIF($'.($this->column_letter[$this->packing_list['pl_no_of_sizes']+7]).'$'.$this->table_content_row_start.':'.
+                '$'.($this->column_letter[$this->packing_list['pl_no_of_sizes']+7]).'$'.($this->table_second_content_row_start-1).
+                ',F'.($carton_summary_row_start+$cl).','.
+                '$'.($this->column_letter[$this->packing_list['pl_no_of_sizes']+1]).'$'.$this->table_content_row_start.':'.
+                '$'.($this->column_letter[$this->packing_list['pl_no_of_sizes']+1]).'$'.($this->table_second_content_row_start-1).')';
+            $event->sheet->setCellValue('G'.($carton_summary_row_start+$cl),$carton_qty)
+                ->getStyle('G'.($carton_summary_row_start+$cl))->applyFromArray($style)->getNumberFormat()->setFormatCode($this->numberSeparator);
+        }
+//        dd($this->pl_carton_list);
+    }
+
+    private function displayPackingMethod( $event)
+    {
+        $style = [
+            'borders' => [
+                //outline all
+                'outline' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'font' => [
+                'size' => 10,
+                'bold' => true,
+            ],
+        ];
+        $event->sheet->mergeCells('A'.($this->table_second_content_row_start+3).':D'.($this->table_second_content_row_start+3));
+        $event->sheet->setCellValue('A'.($this->table_second_content_row_start+3),'Packing Method')
+            ->getStyle('A'.($this->table_second_content_row_start+3).':D'.($this->table_second_content_row_start+3))->applyFromArray($style);
+        $event->sheet->mergeCells('A'.($this->table_second_content_row_start+4).':D'.($this->table_second_content_row_start+8));
+        $event->sheet->getStyle('A'.($this->table_second_content_row_start+4).':D'.($this->table_second_content_row_start+8))->applyFromArray($style);
+    }
+
+    private function displayCartonMarking($event)
+    {
+        $style = [
+            'borders' => [
+                //outline all
+                'outline' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'font' => [
+                'size' => 10,
+                'bold' => true,
+            ],
+        ];
+
+        $event->sheet->mergeCells($this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+3).
+            ':'.$this->column_letter[$this->packing_list['pl_no_of_sizes']+8].($this->table_second_content_row_start+3));
+        $event->sheet->setCellValue($this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+3),'Carton Mark')
+            ->getStyle($this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+3).
+                ':'.$this->column_letter[$this->packing_list['pl_no_of_sizes']+8].($this->table_second_content_row_start+3))->applyFromArray($style);
+
+        //DISPLAY carton mark
+        $carton_mark = $event->sheet->getDelegate();
+        $this->setCartonMark($carton_mark);
+        //DISPLAY carton mark
+    }
+
+    private function setCartonMark($carton_mark)
+    {
+        $drawings = new Drawing();
+        $drawings->setName('Carton Mark');
+        $drawings->setDescription($this->packing_list['pl_customer_warehouse']);
+        //TO BE CHANGE
+        $image_path = public_path('\\storage\\images\\carton-mark\\sample-carton-mark.png');
+
+        $drawings->setPath($image_path);
+        $drawings->setHeight(150);
+        $cell = $this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+4);
+        $drawings->setCoordinates($cell);
+        $drawings->setWorksheet($carton_mark);
     }
 
 }
