@@ -15,5 +15,8 @@ class Style extends Model
         return $this->hasMany(StyleMcqContent::class);
     }
 
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 
 }

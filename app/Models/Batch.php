@@ -15,4 +15,7 @@ class Batch extends Model
         return $this->hasMany(PackingList::class);
     }
 
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }

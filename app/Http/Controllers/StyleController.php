@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\StyleMcqImport;
 use App\Models\Style;
+use App\Models\StyleMcqContent;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -17,7 +18,7 @@ class StyleController extends Controller
 
     public function index()
     {
-        $styles = new Style();
+        $styles = Style::paginate(15);
 
         return view('style.index', compact('styles'));
     }
@@ -43,48 +44,42 @@ class StyleController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Style  $style
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Style $style)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Style  $style
-     * @return \Illuminate\Http\Response
-     */
+    public function showContent(Style $style)
+    {
+        $style_code = $style->style_code;
+        $contents = $style->mcq_contents;
+        return view('style.show-content',compact('contents','style_code'));
+    }
+
     public function edit(Style $style)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Style  $style
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, Style $style)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Style  $style
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Style $style)
     {
-        //
+        $style->mcq_contents()->delete();
+        $style->delete();
+        return redirect(route('styles.index'));
+    }
+
+    public function destroyPerContent(StyleMcqContent $content){
+
+        $content->delete();
+
+        return redirect()->back();
     }
 }

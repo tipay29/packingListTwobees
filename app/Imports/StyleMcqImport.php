@@ -21,7 +21,10 @@ class StyleMcqImport implements ToModel,WithHeadingRow, WithColumnLimit
             $style = Style::where('style_code', $row['basis'])->first();
 
             if ($style === null) {
-                $style = Style::create(['style_code' => $row['basis']]);
+                $style = Style::create([
+                    'style_code' => $row['basis'],
+                    'user_id' => auth()->user()->id,
+                ]);
             }
 
             if(count($style->mcq_contents) === 0){
@@ -32,7 +35,6 @@ class StyleMcqImport implements ToModel,WithHeadingRow, WithColumnLimit
                 //if exist check the basis
                 $style_mcq = StyleMcqContent::where([
                     ['style_size',$row['size']],
-                    ['style_weight',$row['weight']],
                     ['carton_measurement', $row['carton']],
                     ['style_id', $style->id],
                 ])->first();

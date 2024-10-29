@@ -20,9 +20,9 @@ class PackingListController extends Controller
 
     public function index()
     {
-        $packinglists = new PackingList();
+        $batches = Batch::paginate(15);
 
-        return view('packing-list.index', compact('packinglists'));
+        return view('packing-list.index', compact('batches'));
     }
 
 
@@ -54,7 +54,17 @@ class PackingListController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-        return Excel::download(new PackingListMultiSheetExport($batch->id), 'packing_lists.xlsx');
+//        Excel::download(new PackingListMultiSheetExport($batch->id), 'packing_lists.xlsx');
+
+        return redirect(route('packing-lists.show-batch',$batch->id));
+
+    }
+
+    public function export($batch,$factory_po)
+    {
+
+        return Excel::download(new PackingListMultiSheetExport($batch,$factory_po), $factory_po.'.xlsx');
+
     }
 
     public function store()
@@ -66,6 +76,13 @@ class PackingListController extends Controller
     public function show(PackingList $packingList)
     {
         //
+    }
+
+    public function showBatch($batch)
+    {
+        $factory_pos = PackingList::where('batch_id',$batch)->distinct()->pluck('pl_factory_po');
+
+        return view('packing-list.show-batch',compact('factory_pos','batch'));
     }
 
 
@@ -84,5 +101,26 @@ class PackingListController extends Controller
     public function destroy(PackingList $packingList)
     {
         //
+    }
+
+    public function destroyPerPO($batch,$factory_po){
+        $packing_lists = PackingList::where([
+            'batch_id' => $batch,
+            'pl_factory_po' => $factory_po,
+        ])->get();
+
+        foreach($packing_lists as $packing_list){
+            $packing_list->delete();
+        }
+
+        return redirect(route('packing-lists.show-batch',$batch));
+    }
+
+    public function destroyPerBatch(Batch $batch){
+
+        $batch->packing_lists()->delete();
+        $batch->delete();
+
+        return redirect(route('packing-lists.index'));
     }
 }

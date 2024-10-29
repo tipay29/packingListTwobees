@@ -46,7 +46,8 @@
                                     <li><a class="dropdown-item" href="{{route('packing-lists.create')}}">Packing Lists Create</a></li>
                                     <li><a class="dropdown-item" href="{{route('styles.index')}}">Styles</a></li>
                                     <li><a class="dropdown-item" href="{{route('styles.create')}}">Style MCQ Create</a></li>
-
+                                    <li><a class="dropdown-item" href="{{route('styles.index')}}">Carton Marks</a></li>
+                                    <li><a class="dropdown-item" href="{{route('styles.create')}}">Carton Marks Create</a></li>
                                 </ul>
                             </div>
 

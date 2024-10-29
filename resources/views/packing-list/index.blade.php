@@ -29,32 +29,47 @@
                         <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <th scope="col"></th>
-                                <th scope="col">First</th>
-                                <th scope="col">Last</th>
-                                <th scope="col">Handle</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Buy Year</th>
+                                <th scope="col">Buy Month</th>
+                                <th scope="col">Season</th>
+                                <th scope="col">Create By</th>
+                                <th scope="col">Option</th>
                             </tr>
                             </thead>
                             <tbody>
+                            @forelse($batches as $batch)
                             <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
+                                <th scope="row">{{$batch->id}}</th>
+                                <td>{{$batch->buy_year}}</td>
+                                <td>{{$batch->buy_month}}</td>
+                                <td>{{$batch->season}}</td>
+                                <td>{{$batch->user->name}}</td>
+                                <td>
+                                    <a class="btn btn-outline-primary" href="{{route('packing-lists.show-batch',$batch->id)}}">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </a>
+                                    <form style="display:inline;padding: 0;" action="{{route('packing-lists.destroy-per-batch', $batch)}}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-outline-secondary"
+                                                onclick="return confirm('Delete Batch ID#{{$batch->id}}  ?')" >
+                                            <i class="fa fa-trash" aria-hidden="true"></i></button>
+                                    </form>
+                                </td>
                             </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td colspan="2">Larry the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
+                            @empty
+                                <h4 class="text-danger">No Record</h4>
+                            @endforelse
+
                             </tbody>
                         </table>
+
+                        <div class="row">
+                            <div class="col-12 d-flex justify-content-center ">
+                                {{$batches->withQueryString()->onEachSide(2)->links()}}
+                            </div>
+                        </div>
 
                     </div>
                 </div>

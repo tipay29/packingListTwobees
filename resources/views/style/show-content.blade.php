@@ -6,7 +6,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <h5 class="mt-2">Style</h5>
+                        <h5 class="mt-2">Style Basis {{$style_code}}</h5>
 
                         <div>
 
@@ -29,27 +29,27 @@
                         <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Style Basis</th>
-                                <th scope="col">Create By</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Weight</th>
+                                <th scope="col">Carton (CM)</th>
+                                <th scope="col">MCQ</th>
                                 <th scope="col">Option</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @forelse($styles as $style)
+                            @forelse($contents as $content)
                                 <tr>
-                                    <th scope="row">{{$style->id}}</th>
-                                    <td>{{$style->style_code}}</td>
-                                    <td>{{$style->user->name}}</td>
+                                    <td>{{$content->style_size}}</td>
+                                    <td>{{$content->style_weight}}</td>
+                                    <td>{{$content->carton_measurement}}</td>
+                                    <td>{{$content->mcq}}</td>
                                     <td>
-                                        <a class="btn btn-outline-primary" href="{{route('styles.show-content',$style->id)}}">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <form style="display:inline;padding: 0;" action="{{route('styles.destroy', $style->id)}}" method="post">
+
+                                        <form style="display:inline;padding: 0;" action="{{route('styles.destroy-per-content',$content->id)}}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-outline-secondary"
-                                                    onclick="return confirm('Delete Style ID#{{$style->id}}  ?')" >
+                                                    onclick="return confirm('Delete Content?')" >
                                                 <i class="fa fa-trash" aria-hidden="true"></i></button>
                                         </form>
                                     </td>

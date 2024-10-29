@@ -87,7 +87,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
     public function title(): string
     {
-        return $this->packing_list['pl_customer_warehouse'] . ' ' . $this->packing_list['pl_crd'];
+        return $this->packing_list['pl_style_code'] . ' ' . $this->packing_list['pl_color_desc'];
     }
 
     public function registerEvents(): array
@@ -1152,12 +1152,12 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         $drawings->setDescription($this->packing_list['pl_customer_warehouse']);
         //TO BE CHANGE
         $image_path = public_path('\\storage\\images\\carton-mark\\sample-carton-mark.png');
-
-        $drawings->setPath($image_path);
-        $drawings->setHeight(150);
-        $cell = $this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+4);
-        $drawings->setCoordinates($cell);
-        $drawings->setWorksheet($carton_mark);
+//
+//        $drawings->setPath($image_path);
+//        $drawings->setHeight(150);
+//        $cell = $this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+4);
+//        $drawings->setCoordinates($cell);
+//        $drawings->setWorksheet($carton_mark);
     }
 
 }
