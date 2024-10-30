@@ -6,14 +6,14 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <h5 class="mt-2">Style</h5>
+                        <h5 class="mt-2">Carton Marks</h5>
 
                         <div>
 
-                            <a href="{{route('styles.create')}}"
+                            <a href="{{route('carton-marks.create')}}"
                                class="btn btn-outline-primary">
                                 <i class="fa fa-upload" aria-hidden="true"></i>
-                                MCQ</a>
+                                Carton Mark</a>
 
                             <a href="{{url()->previous()}}"
                                class="btn btn-outline-secondary">
@@ -29,27 +29,30 @@
                         <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Style Basis</th>
-                                <th scope="col">Create By</th>
-                                <th scope="col">Option</th>
+                                <th width="10%" scope="col">ID</th>
+                                <th width="20%" scope="col">Customer</th>
+                                <th width="50%" scope="col">Image</th>
+                                <th width="10%" scope="col">Create By</th>
+                                <th width="10%" scope="col">Option</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @forelse($styles as $style)
+                            @forelse($carton_marks as $carton_mark)
                                 <tr>
-                                    <th scope="row">{{$style->id}}</th>
-                                    <td>{{$style->style_code}}</td>
-                                    <td>{{$style->user->name}}</td>
+                                    <th scope="row">{{$carton_mark->id}}</th>
+                                    <td>{{$carton_mark->cm_customer}}</td>
                                     <td>
-                                        <a class="btn btn-outline-primary" href="{{route('styles.show-content',$style->id)}}">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <form style="display:inline;padding: 0;" action="{{route('styles.destroy', $style->id)}}" method="post">
+                                        <img
+                                            src="{{asset($carton_mark->cm_image_path)}}"
+                                            class="img-fluid" alt="">
+                                    </td>
+                                    <td>{{$carton_mark->user->name}}</td>
+                                    <td>
+                                        <form style="display:inline;padding: 0;" action="{{route('carton-marks.destroy', $carton_mark->id)}}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-outline-secondary"
-                                                    onclick="return confirm('Delete Style ID#{{$style->id}}  ?')" >
+                                                    onclick="return confirm('Delete {{$carton_mark->cm_customer}} Carton Mark ?')" >
                                                 <i class="fa fa-trash" aria-hidden="true"></i></button>
                                         </form>
                                     </td>
@@ -60,12 +63,12 @@
 
                             </tbody>
                         </table>
+
                         <div class="row">
                             <div class="col-12 d-flex justify-content-center ">
-                                {{$styles->withQueryString()->onEachSide(2)->links()}}
+                                {{$carton_marks->withQueryString()->onEachSide(2)->links()}}
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

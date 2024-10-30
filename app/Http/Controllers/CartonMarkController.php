@@ -4,82 +4,79 @@ namespace App\Http\Controllers;
 
 use App\Models\CartonMark;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CartonMarkController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        //
+        $carton_marks = CartonMark::paginate(10);
+
+        return view('carton-mark.index', compact('carton_marks'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        //
+        return view('carton-mark.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store()
     {
-        //
+        $this->validateRequest();
+
+        $pathname = '/storage/images/carton-mark/';
+        $pathname_two = '/public/images/carton-mark/';
+        $filename = request()->cm_customer . '.png';
+        $wholename = $pathname.$filename;
+        $image = request()->file('file');
+        $image->storeAs($pathname_two, $filename);
+
+        $carton_mark = CartonMark::create([
+            'cm_customer' => request()->cm_customer,
+            'cm_image_path' => $wholename,
+            'user_id' => auth()->user()->id,
+        ]);
+
+        return redirect(route('carton-marks.index'));
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\CartonMark  $cartonMark
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(CartonMark $cartonMark)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\CartonMark  $cartonMark
-     * @return \Illuminate\Http\Response
-     */
     public function edit(CartonMark $cartonMark)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CartonMark  $cartonMark
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, CartonMark $cartonMark)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\CartonMark  $cartonMark
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(CartonMark $cartonMark)
     {
-        //
+
+        Storage::disk('local')->delete(str_replace('/storage','/public',$cartonMark->cm_image_path));
+        $cartonMark->delete();
+
+        return redirect()->back();
+    }
+
+    public function validateRequest(){
+        return request()->validate([
+            'cm_customer' => 'required|unique:carton_marks,cm_customer',
+            'file' => 'required',
+        ]);
     }
 }

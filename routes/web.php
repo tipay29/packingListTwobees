@@ -17,5 +17,7 @@ Route::get('styles/show-content/{style}','StyleController@showContent')->name('s
 Route::post('styles/import','StyleController@import')->name('styles.import');
 Route::resource('styles','StyleController');
 
+Route::resource('carton-marks','CartonMarkController');
+
 Auth::routes();
 

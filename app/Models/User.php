@@ -33,4 +33,8 @@ class User extends Authenticatable
     public function styles(){
         return $this->hasMany(Style::class);
     }
+
+    public function carton_marks(){
+        return $this->hasMany(CartonMark::class);
+    }
 }

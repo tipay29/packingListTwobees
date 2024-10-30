@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Style;
 use App\Models\user;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -1147,17 +1148,24 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
     private function setCartonMark($carton_mark)
     {
-        $drawings = new Drawing();
-        $drawings->setName('Carton Mark');
-        $drawings->setDescription($this->packing_list['pl_customer_warehouse']);
-        //TO BE CHANGE
-        $image_path = public_path('\\storage\\images\\carton-mark\\sample-carton-mark.png');
-//
-//        $drawings->setPath($image_path);
-//        $drawings->setHeight(150);
-//        $cell = $this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+4);
-//        $drawings->setCoordinates($cell);
-//        $drawings->setWorksheet($carton_mark);
+
+        $fileName = '/public/images/carton-mark/'.$this->packing_list['pl_customer_warehouse'].'.png';
+        $fileNameTwo = public_path('/storage/images/carton-mark/'.$this->packing_list['pl_customer_warehouse'].'.png');
+        $cell = $this->column_letter[$this->packing_list['pl_no_of_sizes']+2].($this->table_second_content_row_start+4);
+
+        $exists = Storage::disk('local')->exists($fileName);
+
+        if($exists){
+            $drawings = new Drawing();
+            $drawings->setName('Carton Mark');
+            $drawings->setDescription($this->packing_list['pl_customer_warehouse']);
+            $drawings->setPath($fileNameTwo);
+            $drawings->setHeight(150);
+            $drawings->setCoordinates($cell);
+            $drawings->setWorksheet($carton_mark);
+        }
+
+
     }
 
 }

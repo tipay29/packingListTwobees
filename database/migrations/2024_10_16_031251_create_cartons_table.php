@@ -15,6 +15,8 @@ class CreateCartonsTable extends Migration
     {
         Schema::create('cartons', function (Blueprint $table) {
             $table->id();
+            $table->string('ctn_measurement')->nullable();
+            $table->double('ctn_weight')->nullable();
             $table->timestamps();
         });
     }
