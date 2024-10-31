@@ -7,79 +7,62 @@ use Illuminate\Http\Request;
 
 class CartonController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        $cartons = Carton::paginate(10);
+
+        return view('carton.index', compact('cartons'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        //
+        return view('carton.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store()
     {
-        //
+        $data = [
+            'ctn_measurement' => request()->ctn_measurement,
+            'ctn_weight' => request()->ctn_weight,
+            'user_id' => auth()->user()->id,
+        ];
+
+        Carton::create($data);
+
+        return redirect(route('cartons.index'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Carton  $carton
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Carton $carton)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Carton  $carton
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit(Carton $carton)
     {
-        //
+        return view('carton.edit',compact('carton'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Carton  $carton
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Carton $carton)
+
+    public function update( Carton $carton)
     {
-        //
+        $carton->update([
+            'ctn_measurement' => request()->ctn_measurement,
+            'ctn_weight' => request()->ctn_weight,
+        ]);
+
+        return redirect(route('cartons.index'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Carton  $carton
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Carton $carton)
     {
-        //
+        $carton->delete();
+
+        return redirect(route('cartons.index'));
     }
 }

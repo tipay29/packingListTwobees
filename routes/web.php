@@ -19,5 +19,7 @@ Route::resource('styles','StyleController');
 
 Route::resource('carton-marks','CartonMarkController');
 
+Route::resource('cartons','CartonController');
+
 Auth::routes();
 

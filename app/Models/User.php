@@ -37,4 +37,8 @@ class User extends Authenticatable
     public function carton_marks(){
         return $this->hasMany(CartonMark::class);
     }
+
+    public function cartons(){
+        return $this->hasMany(Carton::class);
+    }
 }

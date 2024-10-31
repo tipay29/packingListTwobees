@@ -48,6 +48,8 @@
                                     <li><a class="dropdown-item" href="{{route('styles.create')}}">Style MCQ Create</a></li>
                                     <li><a class="dropdown-item" href="{{route('carton-marks.index')}}">Carton Marks</a></li>
                                     <li><a class="dropdown-item" href="{{route('carton-marks.create')}}">Carton Marks Create</a></li>
+                                    <li><a class="dropdown-item" href="{{route('cartons.index')}}">Cartons</a></li>
+                                    <li><a class="dropdown-item" href="{{route('cartons.create')}}">Carton Create</a></li>
                                 </ul>
                             </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Carton;
 use App\Models\Style;
 use App\Models\user;
 use Carbon\Carbon;
@@ -60,15 +61,18 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         $this->column_letter = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'
                                 ,'AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU'];
         $this->size_list = ['XS','S','M','L','XL','2XL','3XL'];
+        $cartons = Carton::all();
+        $this->pl_first_carton_weight = $cartons[0]->ctn_weight;
+        $this->pl_second_carton_weight = $cartons[1]->ctn_weight;
+        $this->pl_third_carton_weight = 1;
+
 
         $this->numberSeparator = "#,##0";
         $this->numberSeparatorDecimal = "#,##0.00";
 
         $this->table_content_row_start = 12;
         $this->table_second_content_row_start = 12;
-        $this->pl_first_carton_weight = 1.3;
-        $this->pl_second_carton_weight = 1.1;
-        $this->pl_third_carton_weight = 1;
+
         $this->pl_carton_number = 1;
         $this->pl_balance_quantity = [];
         $this->pl_no_size_mcq = [];
