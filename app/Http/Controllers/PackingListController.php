@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\PackingListExport;
 use App\Exports\PackingListMultiSheetExport;
 use App\Imports\PackingListImport;
 use App\Models\Batch;
 use App\Models\PackingList;
-use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PackingListController extends Controller
@@ -20,7 +18,7 @@ class PackingListController extends Controller
 
     public function index()
     {
-        $batches = Batch::paginate(15);
+        $batches = Batch::orderBy('id', 'DESC')->paginate(15);
 
         return view('packing-list.index', compact('batches'));
     }
@@ -54,9 +52,10 @@ class PackingListController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-//        Excel::download(new PackingListMultiSheetExport($batch->id), 'packing_lists.xlsx');
+        $factory_pos = PackingList::where('batch_id',$batch->id)->distinct()->pluck('pl_factory_po');
 
-        return redirect(route('packing-lists.show-batch',$batch->id));
+        return view('packing-list.show-batch',compact('factory_pos','batch'))
+            ->with('success','Import Successfully!!!');
 
     }
 
@@ -67,45 +66,20 @@ class PackingListController extends Controller
 
     }
 
-    public function store()
+    public function showBatch(Batch $batch)
     {
-
-    }
-
-
-    public function show(PackingList $packingList)
-    {
-        //
-    }
-
-    public function showBatch($batch)
-    {
-        $factory_pos = PackingList::where('batch_id',$batch)->distinct()->pluck('pl_factory_po');
+        $factory_pos = PackingList::where('batch_id',$batch->id)->distinct()->pluck('pl_factory_po');
 
         return view('packing-list.show-batch',compact('factory_pos','batch'));
     }
 
 
-    public function edit(PackingList $packingList)
-    {
-        //
-    }
-
-
-    public function update(Request $request, PackingList $packingList)
-    {
-        //
-    }
-
-
-    public function destroy(PackingList $packingList)
-    {
-        //
-    }
-
     public function destroyPerPO($batch,$factory_po){
+
+        $batch = Batch::where('id',$batch)->first();
+
         $packing_lists = PackingList::where([
-            'batch_id' => $batch,
+            'batch_id' => $batch->id,
             'pl_factory_po' => $factory_po,
         ])->get();
 
@@ -113,7 +87,19 @@ class PackingListController extends Controller
             $packing_list->delete();
         }
 
-        return redirect(route('packing-lists.show-batch',$batch));
+
+        if(count($batch->packing_lists) === 0){
+            $batch->delete();
+            $batches = Batch::orderBy('id', 'DESC')->paginate(15);
+            return view('packing-list.index', compact('batches'))
+                ->with('success','Delete Successfully!!!');
+        }
+
+        $factory_pos = PackingList::where('batch_id',$batch->id)->distinct()->pluck('pl_factory_po');
+
+
+        return view('packing-list.show-batch',compact('factory_pos','batch'))
+            ->with('success','Delete Successfully!!!');
     }
 
     public function destroyPerBatch(Batch $batch){
@@ -121,6 +107,10 @@ class PackingListController extends Controller
         $batch->packing_lists()->delete();
         $batch->delete();
 
-        return redirect(route('packing-lists.index'));
+        $batches = Batch::orderBy('id', 'DESC')->paginate(15);
+
+
+        return view('packing-list.index', compact('batches'))
+            ->with('success','Delete Successfully!!!');
     }
 }

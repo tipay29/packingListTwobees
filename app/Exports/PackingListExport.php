@@ -61,11 +61,26 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         $this->column_letter = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'
                                 ,'AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU'];
         $this->size_list = ['XS','S','M','L','XL','2XL','3XL'];
-        $cartons = Carton::all();
-        $this->pl_first_carton_weight = $cartons[0]->ctn_weight;
-        $this->pl_second_carton_weight = $cartons[1]->ctn_weight;
-        $this->pl_third_carton_weight = 1;
 
+        $cartons = Carton::all();
+
+        if(count($cartons) > 0){
+            $this->pl_first_carton_weight = $cartons[0]->ctn_weight;
+        }else{
+            $this->pl_first_carton_weight = 1.3;
+        }
+        if(count($cartons) > 1){
+            $this->pl_second_carton_weight = $cartons[1]->ctn_weight;
+        }else{
+            $this->pl_second_carton_weight = 1.1;
+        }
+        if(count($cartons) > 2){
+            $this->pl_third_carton_weight = $cartons[2]->ctn_weight;
+        }else{
+            $this->pl_third_carton_weight = 0.9;
+        }
+
+        $this->pl_third_carton_weight = 1;
 
         $this->numberSeparator = "#,##0";
         $this->numberSeparatorDecimal = "#,##0.00";

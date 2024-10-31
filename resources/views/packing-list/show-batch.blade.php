@@ -6,7 +6,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <h5 class="mt-2">Packing List Batch {{$batch}}</h5>
+                        <h5 class="mt-2">Packing List Batch {{$batch->id}}</h5>
 
                         <div>
 
@@ -25,6 +25,10 @@
                     </div>
 
                     <div class="card-body">
+
+                        @if(!empty($success))
+                            <div class="alert alert-success"> {{ $success }}</div>
+                        @endif
 
                         <table class="table table-bordered">
                             <thead>

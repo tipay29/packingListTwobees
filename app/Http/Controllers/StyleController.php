@@ -18,7 +18,7 @@ class StyleController extends Controller
 
     public function index()
     {
-        $styles = Style::paginate(15);
+        $styles = Style::orderBy('id','DESC')->paginate(15);
 
         return view('style.index', compact('styles'));
     }
@@ -36,18 +36,9 @@ class StyleController extends Controller
         $import = new StyleMcqImport();
         Excel::import($import, $file);
 
-        return redirect()->back();
-    }
+        $styles = Style::orderBy('id','DESC')->paginate(15);
 
-    public function store(Request $request)
-    {
-        //
-    }
-
-
-    public function show(Style $style)
-    {
-        //
+        return view('style.index', compact('styles'))->with('success','Import Successfully!!!');
     }
 
     public function showContent(Style $style)
@@ -57,29 +48,33 @@ class StyleController extends Controller
         return view('style.show-content',compact('contents','style_code'));
     }
 
-    public function edit(Style $style)
-    {
-        //
-    }
-
-
-    public function update(Request $request, Style $style)
-    {
-        //
-    }
-
-
     public function destroy(Style $style)
     {
         $style->mcq_contents()->delete();
         $style->delete();
-        return redirect(route('styles.index'));
+
+        $styles = Style::orderBy('id','DESC')->paginate(15);
+
+        return view('style.index', compact('styles'))->with('success','Delete Successfully!!!');
     }
 
     public function destroyPerContent(StyleMcqContent $content){
 
+        $style = Style::where('id',$content->style_id)->first();
+
         $content->delete();
 
-        return redirect()->back();
+        $style_code = $style->style_code;
+        $contents = $style->mcq_contents;
+
+        if(count($style->mcq_contents) === 0){
+            $style->delete();
+            $styles = Style::orderBy('id', 'DESC')->paginate(15);
+            return view('style.index', compact('styles'))
+                ->with('success','Delete Successfully!!!');
+        }
+
+
+        return view('style.show-content',compact('contents','style_code'))->with('success','Import Successfully!!!');
     }
 }

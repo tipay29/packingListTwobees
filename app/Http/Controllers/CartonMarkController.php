@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartonMark;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CartonMarkController extends Controller
@@ -15,17 +14,15 @@ class CartonMarkController extends Controller
 
     public function index()
     {
-        $carton_marks = CartonMark::paginate(10);
+        $carton_marks = CartonMark::orderBy('id','DESC')->paginate(10);
 
         return view('carton-mark.index', compact('carton_marks'));
     }
-
 
     public function create()
     {
         return view('carton-mark.create');
     }
-
 
     public function store()
     {
@@ -44,24 +41,10 @@ class CartonMarkController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-        return redirect(route('carton-marks.index'));
+        $carton_marks = CartonMark::orderBy('id','DESC')->paginate(10);
 
-    }
+        return view('carton-mark.index', compact('carton_marks'))->with('success','Added Successfully!!!');
 
-
-    public function show(CartonMark $cartonMark)
-    {
-        //
-    }
-
-    public function edit(CartonMark $cartonMark)
-    {
-        //
-    }
-
-    public function update(Request $request, CartonMark $cartonMark)
-    {
-        //
     }
 
     public function destroy(CartonMark $cartonMark)
@@ -70,7 +53,9 @@ class CartonMarkController extends Controller
         Storage::disk('local')->delete(str_replace('/storage','/public',$cartonMark->cm_image_path));
         $cartonMark->delete();
 
-        return redirect()->back();
+        $carton_marks = CartonMark::orderBy('id','DESC')->paginate(10);
+
+        return view('carton-mark.index', compact('carton_marks'))->with('success','Delete Successfully!!!');
     }
 
     public function validateRequest(){

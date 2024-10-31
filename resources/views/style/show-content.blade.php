@@ -25,7 +25,9 @@
                     </div>
 
                     <div class="card-body">
-
+                        @if(!empty($success))
+                            <div class="alert alert-success"> {{ $success }}</div>
+                        @endif
                         <table class="table table-bordered">
                             <thead>
                             <tr>
