@@ -29,9 +29,7 @@ class CartonController extends Controller
 
         Carton::create($data);
 
-        $cartons = Carton::paginate(10);
-
-        return view('carton.index', compact('cartons'))->with('success','Added Successfully!!!');
+        return redirect(route('cartons.index'))->with('success','Added Successfully!!!');
     }
 
     public function edit(Carton $carton)
@@ -46,17 +44,13 @@ class CartonController extends Controller
             'ctn_weight' => request()->ctn_weight,
         ]);
 
-        $cartons = Carton::paginate(10);
-
-        return view('carton.index', compact('cartons'))->with('success','Update Successfully!!!');
+        return redirect(route('cartons.index'))->with('success','Update Successfully!!!');
     }
 
     public function destroy(Carton $carton)
     {
         $carton->delete();
 
-        $cartons = Carton::paginate(10);
-
-        return view('carton.index', compact('cartons'))->with('success','Delete Successfully!!!');
+        return redirect(route('cartons.index'))->with('success','Destroy Successfully!!!');
     }
 }

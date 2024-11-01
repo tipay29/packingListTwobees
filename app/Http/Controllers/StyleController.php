@@ -36,9 +36,7 @@ class StyleController extends Controller
         $import = new StyleMcqImport();
         Excel::import($import, $file);
 
-        $styles = Style::orderBy('id','DESC')->paginate(15);
-
-        return view('style.index', compact('styles'))->with('success','Import Successfully!!!');
+        return redirect(route('styles.index'))->with('success','Import Successfully!!!');
     }
 
     public function showContent(Style $style)
@@ -48,33 +46,26 @@ class StyleController extends Controller
         return view('style.show-content',compact('contents','style_code'));
     }
 
-    public function destroy(Style $style)
-    {
-        $style->mcq_contents()->delete();
-        $style->delete();
-
-        $styles = Style::orderBy('id','DESC')->paginate(15);
-
-        return view('style.index', compact('styles'))->with('success','Delete Successfully!!!');
-    }
-
     public function destroyPerContent(StyleMcqContent $content){
 
         $style = Style::where('id',$content->style_id)->first();
 
         $content->delete();
 
-        $style_code = $style->style_code;
-        $contents = $style->mcq_contents;
-
         if(count($style->mcq_contents) === 0){
             $style->delete();
-            $styles = Style::orderBy('id', 'DESC')->paginate(15);
-            return view('style.index', compact('styles'))
-                ->with('success','Delete Successfully!!!');
+            return redirect(route('styles.index'))->with('success','Destroy Successfully!!!');
         }
 
+        return redirect()->route('styles.show-content',$style->id)->with('success','Import Successfully!!!');
+    }
+    public function destroyPerStyle(Style $style)
+    {
+//        dd('wa');
 
-        return view('style.show-content',compact('contents','style_code'))->with('success','Import Successfully!!!');
+        $style->mcq_contents()->delete();
+        $style->delete();
+
+        return redirect(route('styles.index'))->with('success','Destroy Successfully!!!');
     }
 }

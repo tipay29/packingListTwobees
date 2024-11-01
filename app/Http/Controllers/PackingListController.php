@@ -52,10 +52,8 @@ class PackingListController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-        $factory_pos = PackingList::where('batch_id',$batch->id)->distinct()->pluck('pl_factory_po');
 
-        return view('packing-list.show-batch',compact('factory_pos','batch'))
-            ->with('success','Import Successfully!!!');
+        return redirect()->route('packing-lists.show-batch',$batch->id)->with('success','Import Successfully!!!');
 
     }
 
@@ -87,19 +85,15 @@ class PackingListController extends Controller
             $packing_list->delete();
         }
 
-
         if(count($batch->packing_lists) === 0){
+
             $batch->delete();
             $batches = Batch::orderBy('id', 'DESC')->paginate(15);
-            return view('packing-list.index', compact('batches'))
-                ->with('success','Delete Successfully!!!');
+
+            return redirect()->route('packing-lists.index')->with('success','Delete Successfully!!!');
         }
 
-        $factory_pos = PackingList::where('batch_id',$batch->id)->distinct()->pluck('pl_factory_po');
-
-
-        return view('packing-list.show-batch',compact('factory_pos','batch'))
-            ->with('success','Delete Successfully!!!');
+        return redirect()->route('packing-lists.show-batch',$batch->id)->with('success','Delete Successfully!!!');
     }
 
     public function destroyPerBatch(Batch $batch){
@@ -109,8 +103,6 @@ class PackingListController extends Controller
 
         $batches = Batch::orderBy('id', 'DESC')->paginate(15);
 
-
-        return view('packing-list.index', compact('batches'))
-            ->with('success','Delete Successfully!!!');
+        return redirect()->route('packing-lists.index')->with('success','Delete Successfully!!!');
     }
 }

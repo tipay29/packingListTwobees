@@ -41,9 +41,7 @@ class CartonMarkController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-        $carton_marks = CartonMark::orderBy('id','DESC')->paginate(10);
-
-        return view('carton-mark.index', compact('carton_marks'))->with('success','Added Successfully!!!');
+        return redirect(route('carton-marks.index'))->with('success','Added Successfully!!!');
 
     }
 
@@ -53,9 +51,7 @@ class CartonMarkController extends Controller
         Storage::disk('local')->delete(str_replace('/storage','/public',$cartonMark->cm_image_path));
         $cartonMark->delete();
 
-        $carton_marks = CartonMark::orderBy('id','DESC')->paginate(10);
-
-        return view('carton-mark.index', compact('carton_marks'))->with('success','Delete Successfully!!!');
+        return redirect(route('carton-marks.index'))->with('success','Destroy Successfully!!!');
     }
 
     public function validateRequest(){

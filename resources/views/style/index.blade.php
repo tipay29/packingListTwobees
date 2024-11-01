@@ -25,8 +25,8 @@
                     </div>
 
                     <div class="card-body">
-                        @if(!empty($success))
-                            <div class="alert alert-success"> {{ $success }}</div>
+                        @if (session('success'))
+                            <div class="alert alert-success">   {{ session('success') }}</div>
                         @endif
                         <table class="table table-bordered">
                             <thead>
@@ -47,7 +47,8 @@
                                         <a class="btn btn-outline-primary" href="{{route('styles.show-content',$style->id)}}">
                                             <i class="fa fa-eye" aria-hidden="true"></i>
                                         </a>
-                                        <form style="display:inline;padding: 0;" action="{{route('styles.destroy', $style->id)}}" method="post">
+                                        <form style="display:inline;padding: 0;"
+                                              action="{{route('styles.destroy-per-style', $style->id)}}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-outline-secondary"

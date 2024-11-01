@@ -12,6 +12,7 @@ Route::get('packing-lists/show-batch/{batch}','PackingListController@showBatch')
 Route::post('packing-lists/import','PackingListController@import')->name('packing-lists.import');
 Route::resource('packing-lists','PackingListController');
 
+Route::delete('styles/destroy/{style}','StyleController@destroyPerStyle')->name('styles.destroy-per-style');
 Route::delete('styles/{content}','StyleController@destroyPerContent')->name('styles.destroy-per-content');
 Route::get('styles/show-content/{style}','StyleController@showContent')->name('styles.show-content');
 Route::post('styles/import','StyleController@import')->name('styles.import');
