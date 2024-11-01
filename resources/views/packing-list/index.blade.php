@@ -38,6 +38,7 @@
                                 <th scope="col">Buy Month</th>
                                 <th scope="col">Season</th>
                                 <th scope="col">Create By</th>
+                                <th scope="col">Updated At</th>
                                 <th scope="col">Option</th>
                             </tr>
                             </thead>
@@ -49,6 +50,7 @@
                                 <td>{{$batch->buy_month}}</td>
                                 <td>{{$batch->season}}</td>
                                 <td>{{$batch->user->name}}</td>
+                                <td>{{$batch->updated_at}}</td>
                                 <td>
                                     <a class="btn btn-outline-primary" href="{{route('packing-lists.show-batch',$batch->id)}}">
                                         <i class="fa fa-eye" aria-hidden="true"></i>

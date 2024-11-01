@@ -31,10 +31,11 @@
                         <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <th width="10%" scope="col">ID</th>
-                                <th width="20%" scope="col">Customer</th>
-                                <th width="50%" scope="col">Image</th>
-                                <th width="10%" scope="col">Create By</th>
+                                <th width="5%" scope="col">ID</th>
+                                <th width="15%" scope="col">Customer</th>
+                                <th width="40%" scope="col">Image</th>
+                                <th width="15%" scope="col">Create By</th>
+                                <th width="15%" scope="col">Updated At</th>
                                 <th width="10%" scope="col">Option</th>
                             </tr>
                             </thead>
@@ -49,6 +50,7 @@
                                             class="img-fluid" alt="">
                                     </td>
                                     <td>{{$carton_mark->user->name}}</td>
+                                    <td>{{$carton_mark->updated_at}}</td>
                                     <td>
                                         <form style="display:inline;padding: 0;" action="{{route('carton-marks.destroy', $carton_mark->id)}}" method="post">
                                             @csrf

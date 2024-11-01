@@ -34,6 +34,7 @@
                                 <th scope="col">ID</th>
                                 <th scope="col">Style Basis</th>
                                 <th scope="col">Create By</th>
+                                <th scope="col">Updated At</th>
                                 <th scope="col">Option</th>
                             </tr>
                             </thead>
@@ -43,6 +44,7 @@
                                     <th scope="row">{{$style->id}}</th>
                                     <td>{{$style->style_code}}</td>
                                     <td>{{$style->user->name}}</td>
+                                    <td>{{$style->updated_at}}</td>
                                     <td>
                                         <a class="btn btn-outline-primary" href="{{route('styles.show-content',$style->id)}}">
                                             <i class="fa fa-eye" aria-hidden="true"></i>

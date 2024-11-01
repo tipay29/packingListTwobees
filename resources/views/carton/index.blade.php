@@ -33,8 +33,9 @@
                             <tr>
                                 <th width="10%" scope="col">Number</th>
                                 <th width="30%" scope="col">Measurement(CM)</th>
-                                <th width="20%" scope="col">Weight</th>
-                                <th width="20%" scope="col">Create By</th>
+                                <th width="10%" scope="col">Weight</th>
+                                <th width="15%" scope="col">Create By</th>
+                                <th width="15%" scope="col">Updated At</th>
                                 <th width="20%" scope="col">Option</th>
                             </tr>
                             </thead>
@@ -46,6 +47,7 @@
                                     <td>{{$carton->ctn_measurement}}</td>
                                     <td>{{$carton->ctn_weight}}</td>
                                     <td>{{$carton->user->name}}</td>
+                                    <td>{{$carton->updated_at}}</td>
                                     <td>
                                         <a class="btn btn-outline-primary" href="{{route('cartons.edit',$carton->id)}}">
                                             <i class="fa fa-pencil" aria-hidden="true"></i>
