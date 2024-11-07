@@ -10,7 +10,7 @@
 
                         <div>
 
-                            <a href="#"
+                            <a href="{{asset('storage/files/StyleMCQUploadFile.xlsx')}}"
                                class="btn btn-outline-primary">
                                 <i class="fa fa-download" aria-hidden="true"></i>
                                 Sample</a>

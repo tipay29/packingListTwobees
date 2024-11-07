@@ -15,7 +15,8 @@
                                 <i class="fa fa-upload" aria-hidden="true"></i>
                                 MCQ</a>
 
-                            <a href="#"
+                            <a href="{{asset('storage/files/PLUploadFile.xlsx')}}"
+                               download
                                class="btn btn-outline-primary">
                                 <i class="fa fa-download" aria-hidden="true"></i>
                                 Sample</a>
