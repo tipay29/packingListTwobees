@@ -31,26 +31,22 @@ class PackingListImport implements ToModel,WithHeadingRow, WithColumnLimit
 
             $no_of_sizes = $packing_list->pl_no_of_sizes;
             $name_of_sizes = $packing_list->pl_name_of_sizes;
-            $name_of_size_codes = $packing_list->pl_name_of_size_codes;
             $quantities = $packing_list->pl_quantities;
 
             $name_of_size = ',' . $row['size'];
-            $name_of_size_code = ',' . $row['size_code'];
             $quantity = ',' . $row['quantity'];
 
             $new_no_of_sizes = $no_of_sizes + 1;
             $new_name_of_sizes = $name_of_sizes . $name_of_size;
-            $new_name_of_size_codes = $name_of_size_codes . $name_of_size_code;
             $new_quantities = $quantities . $quantity;
 
             $packing_list->update([
                 'pl_no_of_sizes' => $new_no_of_sizes,
                 'pl_name_of_sizes' => $new_name_of_sizes,
-                'pl_name_of_size_codes' => $new_name_of_size_codes,
                 'pl_quantities' => $new_quantities,
             ]);
 
-//            $this->insertPackingListContent($packing_list->id,$row['size_code'],$row['size'],$row['quantity']);
+
         }
         return [];
     }
@@ -72,7 +68,6 @@ class PackingListImport implements ToModel,WithHeadingRow, WithColumnLimit
             'pl_customer_warehouse' => $row['customer_warehouse'],
             'pl_no_of_sizes' => 1,
             'pl_name_of_sizes' => $row['size'],
-            'pl_name_of_size_codes' => $row['size_code'],
             'pl_quantities' => $row['quantity'],
             'pl_status' => 'DRAFT',
             'pl_mcq_basis' => $row['mcq_basis'],
@@ -82,7 +77,7 @@ class PackingListImport implements ToModel,WithHeadingRow, WithColumnLimit
 
         $packing_list = PackingList::create($packing_list);
 
-//        $this->insertPackingListContent($packing_list->id,$row['size_code'],$row['size'],$row['quantity']);
+
 
     }
 
@@ -110,10 +105,5 @@ class PackingListImport implements ToModel,WithHeadingRow, WithColumnLimit
 
     }
 
-    private function insertPackingListContent($id, $size_code, $size, $quantity)
-    {
-
-
-    }
 
 }

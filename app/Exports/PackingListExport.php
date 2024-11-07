@@ -24,7 +24,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
     protected $column_letter;
     protected $size_list;
     protected $pl_sizes_sort;
-    protected $pl_size_codes;
+
     protected $pl_quantities;
     protected $pl_size_letters;
     protected $pl_weight;
@@ -96,7 +96,6 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         $this->initiateSizeDetails();
         //initiate pl sizes sort, pl size codes , pl quantities by sizes
         //dump($this->pl_sizes_sort);
-        //dump($this->pl_size_codes);
         //dd($this->pl_quantities);
     }
 
@@ -369,12 +368,10 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
     private function initiateSizeDetails()
     {
         $exp_name_of_sizes = explode(',',$this->packing_list['pl_name_of_sizes']);
-        $exp_name_of_size_codes = explode(',',$this->packing_list['pl_name_of_size_codes']);
         $exp_quantities = explode(',',$this->packing_list['pl_quantities']);
 
         for($y=0;$y<$this->packing_list['pl_no_of_sizes'];$y++){
             $this->pl_sizes_sort[array_search($exp_name_of_sizes[$y], $this->size_list)] = $exp_name_of_sizes[$y];
-            $this->pl_size_codes[$exp_name_of_sizes[$y]] = $exp_name_of_size_codes[$y];
             $this->pl_quantities[$exp_name_of_sizes[$y]] = $exp_quantities[$y];
             $this->pl_size_letters[$exp_name_of_sizes[$y]] = $this->column_letter[26+$y];
         }
@@ -670,7 +667,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
                     $this->pl_carton_number = $this->pl_carton_number + $ttl_carton;
 
                     //SKU
-                    $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'] . '_' . $this->pl_size_codes[$size];
+                    $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'];
                     $event->sheet->setCellValue('D'.($this->table_content_row_start+$frc), $sku);
 
                     //CHECK IF HAVE BALANCE QUANTITY
@@ -800,7 +797,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
 
             //THIS LOOP IS FOR ONLY DATA FOR 1 PRINT ONLY LIKE CBM
-            $size_codes = '';
+
             $row_sum_qty = 0;
             for($spp = 0;$spp < count($quantities); $spp++){
                 //THIS LOOP IS FOR ONLY DATA FOR SIZES HAVE 2 OR MORE VALUES
@@ -816,8 +813,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
                     '*'.$this->column_letter[26+$cell_size].'3');
                 //number 3 was row for weight
 
-                //GET SIZE CODE
-                $size_codes = $size_codes . '_'. $this->pl_size_codes[$sizes[$spp]];
+
                 //GET ROW SUM
                 $row_sum_qty = $row_sum_qty + $quantities[$spp];
 
@@ -898,7 +894,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             $this->pl_carton_number = $this->pl_carton_number + 1;
 
             //SKU
-            $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'] . $size_codes;
+            $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'];
             $event->sheet->setCellValue('D'.($this->table_second_content_row_start), $sku);
 
 
@@ -995,7 +991,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             $this->pl_carton_number = $this->pl_carton_number + 1;
 
             //SKU
-            $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'] . '_' . $this->pl_size_codes[$size];
+            $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'];
             $event->sheet->setCellValue('D'.($this->table_second_content_row_start), $sku);
 
             $this->table_second_content_row_start++;

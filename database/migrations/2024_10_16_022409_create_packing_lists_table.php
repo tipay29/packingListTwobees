@@ -30,7 +30,6 @@ class CreatePackingListsTable extends Migration
             $table->double('pl_total_cbm')->default(0.00);
             $table->integer('pl_no_of_sizes')->nullable();
             $table->string('pl_name_of_sizes')->nullable();
-            $table->string('pl_name_of_size_codes');
             $table->string('pl_quantities');
             $table->string('pl_status');
             $table->string('pl_mcq_basis');
