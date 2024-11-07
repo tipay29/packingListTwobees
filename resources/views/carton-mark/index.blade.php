@@ -30,14 +30,14 @@
                         @endif
                         <table class="table table-bordered">
                             <thead>
-                            <tr>
-                                <th width="5%" scope="col">ID</th>
-                                <th width="15%" scope="col">Customer</th>
-                                <th width="40%" scope="col">Image</th>
-                                <th width="15%" scope="col">Create By</th>
-                                <th width="15%" scope="col">Updated At</th>
-                                <th width="10%" scope="col">Option</th>
-                            </tr>
+                                <tr>
+                                    <th width="5%" scope="col">ID</th>
+                                    <th width="15%" scope="col">Customer</th>
+                                    <th width="40%" scope="col">Image</th>
+                                    <th width="15%" scope="col">Create By</th>
+                                    <th width="15%" scope="col">Updated At</th>
+                                    <th width="10%" scope="col">Option</th>
+                                </tr>
                             </thead>
                             <tbody>
                             @forelse($carton_marks as $carton_mark)
@@ -52,7 +52,8 @@
                                     <td>{{$carton_mark->user->name}}</td>
                                     <td>{{$carton_mark->updated_at}}</td>
                                     <td>
-                                        <form style="display:inline;padding: 0;" action="{{route('carton-marks.destroy', $carton_mark->id)}}" method="post">
+                                        <form style="display:inline;padding: 0;"
+                                              action="{{route('carton-marks.destroy', $carton_mark->id)}}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-outline-secondary"
@@ -79,3 +80,4 @@
         </div>
     </div>
 @endsection
+
