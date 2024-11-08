@@ -172,9 +172,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
     private function setColumnsWidth($event)
     {
-        $event->sheet->getColumnDimension('A')->setWidth(15);
+        $event->sheet->getColumnDimension('A')->setWidth(7);
         $event->sheet->getColumnDimension('B')->setWidth(7);
-        $event->sheet->getColumnDimension('C')->setWidth(7);
+        $event->sheet->getColumnDimension('C')->setWidth(15);
         $event->sheet->getColumnDimension('D')->setWidth(20);
         $event->sheet->getColumnDimension('E')->setWidth(20);
         $event->sheet->getColumnDimension('F')->setWidth(15);
@@ -210,20 +210,20 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             ],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'color' => ['argb' => '969692']
+                'color' => ['argb' => '0c0d0d']
             ],
             'font' => [
                 'size' => 8,
                 'bold' => true,
-                'color' => ['argb' => 'fccf17'],
+                'color' => ['argb' => 'FFFFFF'],
             ],
         ];
-        $event->sheet->mergeCells('A10:A11');
-        $event->sheet->setCellValue('A10','STYLE# -EB#')->getStyle('A10:A11')->applyFromArray($style_head);
-        $event->sheet->mergeCells('B10:C11');
-        $event->sheet->setCellValue('B10','CTN NO 箱号')->getStyle('B10:C11')->applyFromArray($style_head);
+        $event->sheet->mergeCells('A10:B11');
+        $event->sheet->setCellValue('A10','CTN NO箱号')->getStyle('A10:B11')->applyFromArray($style_head);
+        $event->sheet->mergeCells('C10:C11');
+        $event->sheet->setCellValue('C10','PO')->getStyle('C10:C11')->applyFromArray($style_head);
         $event->sheet->mergeCells('D10:D11');
-        $event->sheet->setCellValue('D10','SKU #')->getStyle('D10:D11')->applyFromArray($style_head);
+        $event->sheet->setCellValue('D10','Style')->getStyle('D10:D11')->applyFromArray($style_head);
         $event->sheet->mergeCells('E10:E11');
         $event->sheet->setCellValue('E10','Description')->getStyle('E10:E11')->applyFromArray($style_head);
         $event->sheet->mergeCells('F10:F11');
@@ -297,6 +297,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         $event->sheet->setCellValue('G1','PACKING LIST')->getStyle('G1:N1')->applyFromArray($style);
         $event->sheet->mergeCells('G2:N2');
         $event->sheet->setCellValue('G2',$this->packing_list['pl_factory_po'])->getStyle('G2:N2')->applyFromArray($style)->applyFromArray(['font' => ['size' => 10,],]);
+        $event->sheet->mergeCells('G3:N3');
+        $event->sheet->setCellValue('G3',$this->packing_list['pl_ship_mode'])->getStyle('G3:N3')->applyFromArray($style)->applyFromArray(['font' => ['size' => 10,],]);
+
         //DISPLAY PHOTO
         $worksheet = $event->sheet->getDelegate();
         $this->setBrandLogo($worksheet);
@@ -312,6 +315,13 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
                 'bold' => true,
             ],
         ];
+        $event->sheet->mergeCells('A2:B2');
+        $event->sheet->mergeCells('A3:B3');
+        $event->sheet->mergeCells('A4:B4');
+        $event->sheet->mergeCells('A5:B5');
+        $event->sheet->mergeCells('A6:B6');
+        $event->sheet->mergeCells('A7:B7');
+
         $event->sheet->setCellValue('A2','Status: ')->getStyle('A2')->applyFromArray($style);
         $event->sheet->setCellValue('A3','MD: ')->getStyle('A3')->applyFromArray($style);
         $event->sheet->setCellValue('A4','Print Date: ')->getStyle('A4')->applyFromArray($style);
@@ -319,24 +329,22 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         $event->sheet->setCellValue('A6','Customer: ')->getStyle('A6')->applyFromArray($style);
         $event->sheet->setCellValue('A7','Destination: ')->getStyle('A7')->applyFromArray($style);
 
-        $event->sheet->mergeCells('B2:D2');
-        $event->sheet->setCellValue('B2',$this->packing_list['pl_status']);
-        $event->sheet->mergeCells('B3:D3');
-        $event->sheet->setCellValue('B3',$this->packing_list['pl_md']);
-        $event->sheet->mergeCells('B4:D4');
-        $event->sheet->setCellValue('B4','=now()')->getStyle('B4')->applyFromArray([ 'alignment' => [
+
+        $event->sheet->setCellValue('C2',$this->packing_list['pl_status']);
+        $event->sheet->setCellValue('C3',$this->packing_list['pl_md']);
+        $event->sheet->setCellValue('C4','=now()')->getStyle('C4')->applyFromArray([ 'alignment' => [
             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
         ],]);
         $event->sheet
-            ->getStyle('B4')
+            ->getStyle('C4')
             ->getNumberFormat()
             ->setFormatCode('yyyy-mm-dd');
-        $event->sheet->mergeCells('B5:D5');
-        $event->sheet->setCellValue('B5',$this->packing_list['pl_crd']);
-        $event->sheet->mergeCells('B6:D6');
-        $event->sheet->setCellValue('B6',$this->packing_list['pl_customer_warehouse']);
-        $event->sheet->mergeCells('B7:D7');
-        $event->sheet->setCellValue('B7',$this->packing_list['pl_destination']);
+
+        $event->sheet->setCellValue('C5',$this->packing_list['pl_crd']);
+
+        $event->sheet->setCellValue('C6',$this->packing_list['pl_customer_warehouse']);
+
+        $event->sheet->setCellValue('C7',$this->packing_list['pl_destination']);
 
     }
 
@@ -356,11 +364,11 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
     private function setBrandLogo($worksheet)
     {
         $drawings = new Drawing();
-        $drawings->setName('JackWolfskin');
-        $drawings->setDescription('JackWolfskin Logo');
-        $drawings->setPath(public_path('\\storage\\images\\jw-logo.png'));
+        $drawings->setName('ZARA');
+        $drawings->setDescription('ZARA Logo');
+        $drawings->setPath(public_path('\\storage\\images\\zara-logo.png'));
         $drawings->setHeight(25);
-        $drawings->setCoordinates('B1');
+        $drawings->setCoordinates('C1');
         $drawings->setWorksheet($worksheet);
 
     }
@@ -484,14 +492,17 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
         //
 
         // NEED TO SECOND ROW TOTAL SO PUT THE STYLE EB DESCRIPTION AND COLOR HERE
-        $event->sheet->mergeCells('A12:A'.($this->table_second_content_row_start-1));
-        $event->sheet->setCellValue('A12',$this->packing_list['pl_style_code'] . ' ' . $this->packing_list['pl_po'])
-            ->getStyle('A12:A'.($this->table_second_content_row_start-1))->applyFromArray($style);
+        $event->sheet->mergeCells('C12:C'.($this->table_second_content_row_start-1));
+        $event->sheet->setCellValue('C12',$this->packing_list['pl_po'])
+            ->getStyle('C12:C'.($this->table_second_content_row_start-1))->applyFromArray($style);
+        $event->sheet->mergeCells('D12:D'.($this->table_second_content_row_start-1));
+        $event->sheet->setCellValue('D12',$this->packing_list['pl_style_code'])
+            ->getStyle('D12:D'.($this->table_second_content_row_start-1))->applyFromArray($style);
         $event->sheet->mergeCells('E12:E'.($this->table_second_content_row_start-1));
         $event->sheet->setCellValue('E12',$this->packing_list['pl_style_desc'])
             ->getStyle('E12:E'.($this->table_second_content_row_start-1))->applyFromArray($style);
         $event->sheet->mergeCells('F12:F'.($this->table_second_content_row_start-1));
-        $event->sheet->setCellValue('F12',$this->packing_list['pl_color_desc'])
+        $event->sheet->setCellValue('F12',($this->packing_list['pl_color_code'].'_'.$this->packing_list['pl_color_desc']))
             ->getStyle('F12:F'.($this->table_second_content_row_start-1))->applyFromArray($style);
 
         //DISPLAY TOTAL SUM OF THE QUANTITY DETAILS
@@ -504,12 +515,12 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
             ],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'color' => ['argb' => '969692']
+                'color' => ['argb' => '0c0d0d']
             ],
             'font' => [
                 'size' => 12,
                 'bold' => true,
-                'color' => ['argb' => 'fccf17'],
+                'color' => ['argb' => 'FFFFFF'],
             ],
         ];
         //ttl carton TOTAL
@@ -574,8 +585,8 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
         for($brd = $this->table_content_row_start;$brd <= $this->table_second_content_row_start; $brd++){
             if($brd < $this->table_second_content_row_start){
+                $event->sheet->getStyle('A'.$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
                 $event->sheet->getStyle('B'.$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
-                $event->sheet->getStyle('C'.$brd)->applyFromArray($style_brd)->getNumberFormat()->setFormatCode($this->numberSeparator);
                 $event->sheet->getStyle('D'.$brd)->applyFromArray($style_brd);
 
                 for($brds = 0; $brds < $this->packing_list['pl_no_of_sizes'];$brds++){
@@ -597,7 +608,7 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
     }
 
-    private function insertFirstQuantity($event)
+    private function    insertFirstQuantity($event)
     {
         $frc = 0;
         for($ss = 0 ;$ss < $this->packing_list['pl_no_of_sizes'];$ss++){
@@ -662,13 +673,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
                     //CARTON NUMBER
                     $carton_number_two = $this->pl_carton_number + ($ttl_carton-1);
-                    $event->sheet->setCellValue('B'.($this->table_content_row_start+$frc), $this->pl_carton_number);
-                    $event->sheet->setCellValue('C'.($this->table_content_row_start+$frc), $carton_number_two);
+                    $event->sheet->setCellValue('A'.($this->table_content_row_start+$frc), $this->pl_carton_number);
+                    $event->sheet->setCellValue('B'.($this->table_content_row_start+$frc), $carton_number_two);
                     $this->pl_carton_number = $this->pl_carton_number + $ttl_carton;
-
-                    //SKU
-                    $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'];
-                    $event->sheet->setCellValue('D'.($this->table_content_row_start+$frc), $sku);
 
                     //CHECK IF HAVE BALANCE QUANTITY
                     $balance_qty = $quantity - $ttl_qty_pcs;
@@ -889,13 +896,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
             //CARTON NUMBER
             $carton_number_two = $this->pl_carton_number;
-            $event->sheet->setCellValue('B'.($this->table_second_content_row_start), $this->pl_carton_number);
-            $event->sheet->setCellValue('C'.($this->table_second_content_row_start), $carton_number_two);
+            $event->sheet->setCellValue('A'.($this->table_second_content_row_start), $this->pl_carton_number);
+            $event->sheet->setCellValue('B'.($this->table_second_content_row_start), $carton_number_two);
             $this->pl_carton_number = $this->pl_carton_number + 1;
-
-            //SKU
-            $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'];
-            $event->sheet->setCellValue('D'.($this->table_second_content_row_start), $sku);
 
 
             $this->table_second_content_row_start++;
@@ -986,13 +989,9 @@ class PackingListExport implements FromCollection,WithTitle,WithEvents,WithDrawi
 
             //CARTON NUMBER
             $carton_number_two = $this->pl_carton_number;
-            $event->sheet->setCellValue('B'.($this->table_second_content_row_start), $this->pl_carton_number);
-            $event->sheet->setCellValue('C'.($this->table_second_content_row_start), $carton_number_two);
+            $event->sheet->setCellValue('A'.($this->table_second_content_row_start), $this->pl_carton_number);
+            $event->sheet->setCellValue('B'.($this->table_second_content_row_start), $carton_number_two);
             $this->pl_carton_number = $this->pl_carton_number + 1;
-
-            //SKU
-            $sku = $this->packing_list['pl_style_code'] . '_' .  $this->packing_list['pl_color_code'];
-            $event->sheet->setCellValue('D'.($this->table_second_content_row_start), $sku);
 
             $this->table_second_content_row_start++;
 
