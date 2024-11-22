@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index']);
 
 Route::delete('packing-lists/{batch}','PackingListController@destroyPerBatch')->name('packing-lists.destroy-per-batch');
 Route::delete('packing-lists/{batch}/{factory_po}','PackingListController@destroyPerPO')->name('packing-lists.destroy-per-po');
